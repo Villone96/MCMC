@@ -30,7 +30,6 @@ cpd_s = TabularCPD(variable='3', variable_card=2,
 model.add_cpds(cpd_d, cpd_i, cpd_g, cpd_l, cpd_s)
 
 
-query = 0
-evidence = {'1' : 1, '4': 1}
-
-MCMC(model, evidence, query, 4000)
+query = 2
+evidence = {'0' : 0}
+MCMC(model, evidence, query, 10000)

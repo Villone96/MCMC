@@ -59,29 +59,31 @@ def markovBlanket(choice, sample, network):
     else:
         for i in range(0, len(cpTableChoice)):
             parentConditional[str(i)] = cpTableChoice[i]
-    # print("Parent Conditional: ", parentConditional)
+    print("Parent Conditional: ", parentConditional)
 
     for value in parentConditional.keys():
+        sonConditional = 1
         for child in choiceChild:
             childParent = network.get_parents(str(child))
             childKey = ''
-            sonConditional = 1
             for parent in childParent:
                 if int(parent) == choice:
                     childKey += value
                 else:
                     childKey += str(sample[int(parent)])
             if len(childKey) == 2:
-                # print("Son key: ", childKey)
+                print("Son key: ", childKey)
                 key1 = int(childKey[0:1])
                 key2 = int(childKey[1:])
                 sonConditional *= network.get_cpds(str(child)).values[int(sample[int(child)])][key2][key1]
+                print("Son value: ", network.get_cpds(str(child)).values[int(sample[int(child)])][key2][key1])
             else:
                 sonConditional *= network.get_cpds(str(child)).values[int(sample[int(child)])][int(childKey)]
-            # print("Son value: ", sonConditional)
+                print("Son value: ", network.get_cpds(str(child)).values[int(sample[int(child)])][int(childKey)])
+            print("SonConditionalValue: ", sonConditional)
         parentConditional[value] = parentConditional[value] * sonConditional
     
-    # print("Parent conditional: ", parentConditional)
+    print("Parent conditional: ", parentConditional)
     norma = normalize(parentConditional)
     # print("Normalize: ", norma)
     value = sampling(norma)
@@ -137,13 +139,13 @@ def MCMC(network, evidence, query, nSamples):
                         sample[i] = easySampling(cptTable[1])
         else:
             choice = variableChoice(len(network))
-            # print("SAMPLE BEFORE: ", sample)
+            print("SAMPLE BEFORE: ", sample)
             while str(choice) in evidence.keys():
                 choice = variableChoice(len(network))
-            # print("variable choice: ", choice)
+            print("variable choice: ", choice)
             sample[choice] = markovBlanket(choice, sample, network)
-            # print("SAMPLE AFTER: ", sample)
-            # print("")
+            print("SAMPLE AFTER: ", sample)
+            print("")
             numerator[sample[query]] += 1
             
         sampleGenerated += 1
